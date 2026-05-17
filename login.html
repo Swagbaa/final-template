@@ -3,25 +3,599 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login — Project Name</title>
+  <meta name="description" content="MusicLog — Your profile, listening history, favorites, and stats.">
+  <title>MusicLog — Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/profile.css">
 </head>
-<body>
+<body data-page="profile">
 
-  <main>
+  <header class="site-header">
+    <nav class="nav" aria-label="Main navigation">
+      <a href="index.html" class="nav__logo" aria-label="MusicLog — go to home">
+        <span class="nav__logo-icon" aria-hidden="true">♪</span>
+        MUSICLOG
+      </a>
 
-    <form id="login-form">
-      <!-- input type="text" with validation attributes -->
-      <label for="name-input">Your name</label>
-      <input id="name-input" type="text" name="name" required minlength="2" autocomplete="name">
+      <ul class="nav__links" role="list">
+        <li><a href="index.html"    class="nav__link">Home</a></li>
+        <li><a href="search.html"   class="nav__link">Search</a></li>
+        <li><a href="profile.html"  class="nav__link nav__link--active" aria-current="page">Profile</a></li>
+      </ul>
 
-      <p id="login-error" hidden></p>
+      <div class="nav__actions">
+        <a href="search.html" class="btn btn--accent btn--sm" aria-label="Log new music">+ Log Music</a>
+        <button
+          class="nav__toggle"
+          id="nav-toggle"
+          aria-label="Open navigation menu"
+          aria-expanded="false"
+          aria-controls="nav-mobile"
+        >
+          <span class="nav__toggle-bar" aria-hidden="true"></span>
+          <span class="nav__toggle-bar" aria-hidden="true"></span>
+          <span class="nav__toggle-bar" aria-hidden="true"></span>
+        </button>
+      </div>
+    </nav>
 
-      <button type="submit">Start →</button>
-    </form>
+    <div class="nav-mobile" id="nav-mobile" hidden>
+      <ul class="nav-mobile__links" role="list">
+        <li><a href="index.html"   class="nav-mobile__link">Home</a></li>
+        <li><a href="search.html"  class="nav-mobile__link">Search</a></li>
+        <li><a href="profile.html" class="nav-mobile__link" aria-current="page">Profile</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="profile-layout" id="main-content">
+
+    <div class="profile-hero" id="profile-hero">
+      <div class="profile-hero__banner" id="profile-banner" aria-hidden="true"></div>
+
+      <div class="profile-hero__body">
+        <div class="profile-hero__avatar-wrap">
+          <img
+            class="profile-hero__avatar"
+            id="profile-avatar"
+            src="assets/avatar-placeholder.svg"
+            alt="Profile avatar"
+          >
+        </div>
+
+        <div class="profile-hero__info">
+          <h1 class="profile-hero__username" id="profile-username">Anonymous</h1>
+          <p class="profile-hero__bio" id="profile-bio">No bio yet. Click "Edit Profile" to add one.</p>
+
+          <ul class="profile-hero__meta" role="list" aria-label="Profile statistics">
+            <li class="profile-hero__stat">
+              <strong class="profile-hero__stat-value" id="hero-songs">0</strong>
+              <span class="profile-hero__stat-label">Songs</span>
+            </li>
+            <li class="profile-hero__stat">
+              <strong class="profile-hero__stat-value" id="hero-albums">0</strong>
+              <span class="profile-hero__stat-label">Albums</span>
+            </li>
+            <li class="profile-hero__stat">
+              <strong class="profile-hero__stat-value" id="hero-time">0h</strong>
+              <span class="profile-hero__stat-label">Listened</span>
+            </li>
+            <li class="profile-hero__stat">
+              <strong class="profile-hero__stat-value" id="hero-joined">—</strong>
+              <span class="profile-hero__stat-label">Joined</span>
+            </li>
+          </ul>
+        </div>
+
+        <button
+          class="btn btn--ghost btn--sm profile-hero__edit-btn"
+          id="edit-profile-btn"
+          aria-expanded="false"
+          aria-controls="edit-profile-panel"
+        >
+          ✎ Edit Profile
+        </button>
+      </div>
+    </div>
+
+    <div class="edit-panel" id="edit-profile-panel" hidden aria-label="Edit profile form">
+      <form class="edit-form" id="edit-form" novalidate>
+        <h2 class="edit-form__heading">Edit Profile</h2>
+
+        <div class="form-group">
+          <label class="form-label" for="edit-username">
+            Display Name <abbr title="required" aria-label="required">*</abbr>
+          </label>
+          <input
+            class="form-input"
+            type="text"
+            id="edit-username"
+            name="username"
+            placeholder="How you appear to others"
+            required
+            minlength="2"
+            maxlength="32"
+            autocomplete="username"
+          >
+          <span class="form-error" id="err-username" role="alert" aria-live="polite"></span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="edit-email">Email</label>
+          <input
+            class="form-input"
+            type="email"
+            id="edit-email"
+            name="email"
+            placeholder="your@email.com"
+            autocomplete="email"
+          >
+          <span class="form-error" id="err-email" role="alert" aria-live="polite"></span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="edit-bio">Bio</label>
+          <textarea
+            class="form-input form-input--textarea"
+            id="edit-bio"
+            name="bio"
+            placeholder="Tell people about your taste in music…"
+            maxlength="300"
+            rows="3"
+          ></textarea>
+          <span class="form-hint" id="bio-char-count">0 / 300</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="edit-country">Country</label>
+          <select class="form-input form-input--select" id="edit-country" name="country">
+            <option value="">— Select country —</option>
+            <option value="ge">Georgia</option>
+            <option value="us">United States</option>
+            <option value="gb">United Kingdom</option>
+            <option value="de">Germany</option>
+            <option value="fr">France</option>
+            <option value="jp">Japan</option>
+            <option value="kr">South Korea</option>
+            <option value="br">Brazil</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="edit-fav-genre">Favourite Genre</label>
+          <select class="form-input form-input--select" id="edit-fav-genre" name="favGenre">
+            <option value="">— Select genre —</option>
+            <option value="rock">Rock</option>
+            <option value="pop">Pop</option>
+            <option value="hip-hop">Hip-Hop / Rap</option>
+            <option value="electronic">Electronic</option>
+            <option value="jazz">Jazz</option>
+            <option value="classical">Classical</option>
+            <option value="r&b">R&amp;B / Soul</option>
+            <option value="metal">Metal</option>
+            <option value="folk">Folk / Indie</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group form-group--check">
+          <label class="form-label form-label--check" for="edit-public">
+            <input
+              class="form-checkbox"
+              type="checkbox"
+              id="edit-public"
+              name="public"
+              checked
+            >
+            <span>Make profile public</span>
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn--accent">Save Changes</button>
+          <button type="button" class="btn btn--ghost" id="cancel-edit-btn">Cancel</button>
+        </div>
+
+        <div class="form-feedback" id="edit-feedback" role="alert" aria-live="polite"></div>
+      </form>
+    </div>
+
+    <nav class="profile-tabs" role="tablist" aria-label="Profile sections">
+      <button
+        class="profile-tab profile-tab--active"
+        role="tab"
+        id="tab-btn-overview"
+        aria-selected="true"
+        aria-controls="panel-overview"
+        data-tab="overview"
+      >Overview</button>
+
+      <button
+        class="profile-tab"
+        role="tab"
+        id="tab-btn-list"
+        aria-selected="false"
+        aria-controls="panel-list"
+        data-tab="list"
+      >List</button>
+
+      <button
+        class="profile-tab"
+        role="tab"
+        id="tab-btn-favorites"
+        aria-selected="false"
+        aria-controls="panel-favorites"
+        data-tab="favorites"
+      >Favorites</button>
+
+      <button
+        class="profile-tab"
+        role="tab"
+        id="tab-btn-stats"
+        aria-selected="false"
+        aria-controls="panel-stats"
+        data-tab="stats"
+      >Stats</button>
+    </nav>
+
+    <section
+      class="tab-panel tab-panel--active"
+      id="panel-overview"
+      role="tabpanel"
+      aria-labelledby="tab-btn-overview"
+    >
+      <div class="overview-layout">
+
+        <div class="overview-activity">
+          <h2 class="section-heading">Recent Activity</h2>
+          <ul class="overview-activity__list" id="overview-recent" role="list" aria-label="Five most recent log entries">
+            <!--
+              <li class="overview-entry">
+                <img class="overview-entry__cover" src="..." alt="Cover for [title]">
+                <div class="overview-entry__info">
+                  <span class="overview-entry__title">Title</span>
+                  <span class="overview-entry__artist">Artist · Year</span>
+                </div>
+                <div class="overview-entry__right">
+                  <span class="overview-entry__score">8/10</span>
+                  <time class="overview-entry__date">May 17</time>
+                </div>
+              </li>
+            -->
+          </ul>
+          <div class="empty-state" id="overview-empty" hidden>
+            <span class="empty-state__icon" aria-hidden="true">🎵</span>
+            <p class="empty-state__text">No entries yet.</p>
+            <a href="search.html" class="btn btn--accent btn--sm">Log your first song →</a>
+          </div>
+        </div>
+
+        <aside class="overview-stats" aria-labelledby="qs-heading">
+          <h2 class="section-heading" id="qs-heading">Quick Stats</h2>
+          <ul class="quick-stats" role="list" id="quick-stats">
+            <li class="quick-stat">
+              <span class="quick-stat__label">Total Songs</span>
+              <span class="quick-stat__value" id="qs-songs">—</span>
+            </li>
+            <li class="quick-stat">
+              <span class="quick-stat__label">Total Albums</span>
+              <span class="quick-stat__value" id="qs-albums">—</span>
+            </li>
+            <li class="quick-stat">
+              <span class="quick-stat__label">Time Listened</span>
+              <span class="quick-stat__value" id="qs-time">—</span>
+            </li>
+            <li class="quick-stat">
+              <span class="quick-stat__label">Mean Rating</span>
+              <span class="quick-stat__value" id="qs-rating">—</span>
+            </li>
+            <li class="quick-stat">
+              <span class="quick-stat__label">Unique Artists</span>
+              <span class="quick-stat__value" id="qs-artists">—</span>
+            </li>
+            <li class="quick-stat">
+              <span class="quick-stat__label">Top Genre</span>
+              <span class="quick-stat__value" id="qs-top-genre">—</span>
+            </li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section
+      class="tab-panel"
+      id="panel-list"
+      role="tabpanel"
+      aria-labelledby="tab-btn-list"
+      hidden
+    >
+      <div class="list-controls" role="search" aria-label="Filter and sort music log">
+        <input
+          class="form-input list-controls__search"
+          type="search"
+          id="list-filter"
+          placeholder="Filter by title, artist, album…"
+          aria-label="Filter log entries by title, artist, or album"
+        >
+        <select
+          class="form-input form-input--select list-controls__sort"
+          id="list-sort"
+          aria-label="Sort log entries"
+        >
+          <option value="date-desc">Date (Newest first)</option>
+          <option value="date-asc">Date (Oldest first)</option>
+          <option value="rating-desc">Rating (High → Low)</option>
+          <option value="rating-asc">Rating (Low → High)</option>
+          <option value="artist-asc">Artist (A → Z)</option>
+          <option value="title-asc">Title (A → Z)</option>
+          <option value="year-desc">Year (Newest)</option>
+          <option value="year-asc">Year (Oldest)</option>
+        </select>
+        <span class="list-controls__count" id="list-count" aria-live="polite"></span>
+      </div>
+
+      <div class="log-table-wrap" role="region" aria-label="Your music log">
+        <table class="log-table" id="log-table">
+          <thead>
+            <tr>
+              <th scope="col" class="log-table__th log-table__th--cover">Cover</th>
+              <th scope="col" class="log-table__th log-table__th--sortable" data-col="title">
+                Title <span class="sort-icon" aria-hidden="true"></span>
+              </th>
+              <th scope="col" class="log-table__th log-table__th--sortable" data-col="artist">
+                Artist <span class="sort-icon" aria-hidden="true"></span>
+              </th>
+              <th scope="col" class="log-table__th">Type</th>
+              <th scope="col" class="log-table__th log-table__th--sortable" data-col="year">
+                Year <span class="sort-icon" aria-hidden="true"></span>
+              </th>
+              <th scope="col" class="log-table__th">Genre</th>
+              <th scope="col" class="log-table__th log-table__th--sortable" data-col="rating">
+                Rating <span class="sort-icon" aria-hidden="true"></span>
+              </th>
+              <th scope="col" class="log-table__th log-table__th--sortable" data-col="date">
+                Logged <span class="sort-icon" aria-hidden="true"></span>
+              </th>
+              <th scope="col" class="log-table__th">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="log-tbody">
+            <!--
+              Each row injected by JS:
+              <tr class="log-row" data-id="[uuid]">
+                <td class="log-row__cover"><img src="..." alt="Cover for [title]"></td>
+                <td class="log-row__title">[title]</td>
+                <td class="log-row__artist">[artist]</td>
+                <td class="log-row__type"><span class="tag tag--[type]">[type]</span></td>
+                <td class="log-row__year">[year]</td>
+                <td class="log-row__genre">[genre]</td>
+                <td class="log-row__rating" aria-label="Rating [n] out of 10">[n]/10</td>
+                <td class="log-row__date">[date]</td>
+                <td class="log-row__actions">
+                  <button class="btn-icon btn-icon--edit" aria-label="Edit [title]">✎</button>
+                  <button class="btn-icon btn-icon--delete" aria-label="Delete [title]">✕</button>
+                </td>
+              </tr>
+            -->
+          </tbody>
+        </table>
+
+        <div class="empty-state" id="list-empty" hidden>
+          <span class="empty-state__icon" aria-hidden="true">📋</span>
+          <p class="empty-state__text">Your list is empty.</p>
+          <a href="search.html" class="btn btn--accent btn--sm">Log some music →</a>
+        </div>
+
+        <div class="empty-state" id="list-no-results" hidden>
+          <span class="empty-state__icon" aria-hidden="true">🔍</span>
+          <p class="empty-state__text">No entries match your filter.</p>
+        </div>
+      </div>
+    </section>
+
+    <section
+      class="tab-panel"
+      id="panel-favorites"
+      role="tabpanel"
+      aria-labelledby="tab-btn-favorites"
+      hidden
+    >
+
+      <article class="favorites-section" aria-labelledby="fav-artists-heading">
+        <header class="favorites-section__header">
+          <h2 class="section-heading" id="fav-artists-heading">Favorite Artists</h2>
+          <span class="favorites-section__count" id="fav-artists-count" aria-live="polite"></span>
+        </header>
+        <div class="favorites-grid" id="fav-artists" role="list" aria-label="Favorite artists">
+          <!--
+            <div class="fav-card fav-card--artist" role="listitem">
+              <div class="fav-card__avatar-wrap">
+                <img class="fav-card__avatar" src="..." alt="[Artist name]">
+              </div>
+              <span class="fav-card__name">[Artist]</span>
+              <button class="fav-card__remove" aria-label="Remove [artist] from favorites">✕</button>
+            </div>
+          -->
+        </div>
+        <div class="empty-state" id="fav-artists-empty" hidden>
+          <p class="empty-state__text">No favorite artists yet. Add them from the log form or your list.</p>
+        </div>
+      </article>
+
+      <!-- Favorite Albums -->
+      <article class="favorites-section" aria-labelledby="fav-albums-heading">
+        <header class="favorites-section__header">
+          <h2 class="section-heading" id="fav-albums-heading">Favorite Albums</h2>
+          <span class="favorites-section__count" id="fav-albums-count" aria-live="polite"></span>
+        </header>
+        <div class="favorites-grid" id="fav-albums" role="list" aria-label="Favorite albums">
+          <!--
+            <div class="fav-card fav-card--album" role="listitem">
+              <img class="fav-card__cover" src="..." alt="Cover art for [album] by [artist]">
+              <div class="fav-card__info">
+                <span class="fav-card__name">[Album]</span>
+                <span class="fav-card__sub">[Artist] · [Year]</span>
+              </div>
+              <button class="fav-card__remove" aria-label="Remove [album] from favorites">✕</button>
+            </div>
+          -->
+        </div>
+        <div class="empty-state" id="fav-albums-empty" hidden>
+          <p class="empty-state__text">No favorite albums yet.</p>
+        </div>
+      </article>
+
+      <article class="favorites-section" aria-labelledby="fav-songs-heading">
+        <header class="favorites-section__header">
+          <h2 class="section-heading" id="fav-songs-heading">Favorite Songs</h2>
+          <span class="favorites-section__count" id="fav-songs-count" aria-live="polite"></span>
+        </header>
+        <div class="favorites-grid favorites-grid--songs" id="fav-songs" role="list" aria-label="Favorite songs">
+          <!--
+            <div class="fav-card fav-card--song" role="listitem">
+              <img class="fav-card__cover" src="..." alt="Cover art for [song]">
+              <div class="fav-card__info">
+                <span class="fav-card__name">[Song]</span>
+                <span class="fav-card__sub">[Artist] · [Album]</span>
+              </div>
+              <button class="fav-card__remove" aria-label="Remove [song] from favorites">✕</button>
+            </div>
+          -->
+        </div>
+        <div class="empty-state" id="fav-songs-empty" hidden>
+          <p class="empty-state__text">No favorite songs yet.</p>
+        </div>
+      </article>
+    </section>
+
+    <section
+      class="tab-panel"
+      id="panel-stats"
+      role="tabpanel"
+      aria-labelledby="tab-btn-stats"
+      hidden
+    >
+
+      <div class="stats-summary" id="stats-summary" aria-label="Summary statistics">
+        <div class="stat-card">
+          <span class="stat-card__icon" aria-hidden="true">⏱</span>
+          <span class="stat-card__value" id="stat-total-time">0h 0m</span>
+          <span class="stat-card__label">Total Time Listened</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card__icon" aria-hidden="true">🎵</span>
+          <span class="stat-card__value" id="stat-total-songs">0</span>
+          <span class="stat-card__label">Songs Logged</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card__icon" aria-hidden="true">💿</span>
+          <span class="stat-card__value" id="stat-total-albums">0</span>
+          <span class="stat-card__label">Albums Logged</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card__icon" aria-hidden="true">⭐</span>
+          <span class="stat-card__value" id="stat-mean-rating">—</span>
+          <span class="stat-card__label">Mean Rating</span>
+        </div>
+      </div>
+
+      <!-- By Year -->
+      <article class="stats-section" aria-labelledby="stats-year-heading">
+        <h2 class="section-heading" id="stats-year-heading">Activity by Year</h2>
+        <p class="stats-section__desc">Release years of music you've logged, with entry count and average rating.</p>
+        <div
+          class="stats-bars"
+          id="stats-by-year"
+          role="list"
+          aria-label="Entries by release year"
+        >
+          <!--
+            JS injects .stats-bar-row elements here.
+            Each row contains: label (year), a bar track div with a fill div
+            (width driven by a CSS custom property set via JS element.style),
+            an entry count, and an average rating.
+          -->
+        </div>
+        <div class="empty-state" id="year-empty" hidden>
+          <p class="empty-state__text">No data yet.</p>
+        </div>
+      </article>
+
+      <!-- By Artist -->
+      <article class="stats-section" aria-labelledby="stats-artist-heading">
+        <h2 class="section-heading" id="stats-artist-heading">Top Artists</h2>
+        <p class="stats-section__desc">Your top 10 most-logged artists with average rating and total listening time.</p>
+        <div class="stats-table-wrap" role="region" aria-label="Artist statistics table">
+          <table class="stats-table" id="stats-artist-table">
+            <thead>
+              <tr>
+                <th scope="col" class="stats-table__th stats-table__th--rank">#</th>
+                <th scope="col" class="stats-table__th">Artist</th>
+                <th scope="col" class="stats-table__th">Entries</th>
+                <th scope="col" class="stats-table__th">Avg Rating</th>
+                <th scope="col" class="stats-table__th">Total Time</th>
+              </tr>
+            </thead>
+            <tbody id="artist-tbody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+          <div class="empty-state" id="artist-empty" hidden>
+            <p class="empty-state__text">No data yet.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="stats-section" aria-labelledby="stats-genre-heading">
+        <h2 class="section-heading" id="stats-genre-heading">By Genre</h2>
+        <p class="stats-section__desc">Breakdown of your listening by genre — entries, average rating, and time.</p>
+        <div class="stats-table-wrap" role="region" aria-label="Genre statistics table">
+          <table class="stats-table" id="stats-genre-table">
+            <thead>
+              <tr>
+                <th scope="col" class="stats-table__th">Genre</th>
+                <th scope="col" class="stats-table__th">Entries</th>
+                <th scope="col" class="stats-table__th">Avg Rating</th>
+                <th scope="col" class="stats-table__th">Total Time</th>
+                <th scope="col" class="stats-table__th">Share</th>
+              </tr>
+            </thead>
+            <tbody id="genre-tbody">
+            </tbody>
+          </table>
+          <div class="empty-state" id="genre-empty" hidden>
+            <p class="empty-state__text">No data yet.</p>
+          </div>
+        </div>
+      </article>
+
+    </section>
 
   </main>
 
-  <script type="module" src="js/login.js"></script>
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <span class="site-footer__brand">
+        <span aria-hidden="true">♪</span> MUSICLOG
+      </span>
+      <p class="site-footer__text">
+        Music data powered by
+        <a href="https://musicbrainz.org" target="_blank" rel="noopener noreferrer">MusicBrainz</a>
+        &amp;
+        <a href="https://coverartarchive.org" target="_blank" rel="noopener noreferrer">Cover Art Archive</a>.
+      </p>
+      <nav class="site-footer__nav" aria-label="Footer navigation">
+        <a href="index.html"   class="site-footer__link">Home</a>
+        <a href="search.html"  class="site-footer__link">Search</a>
+        <a href="profile.html" class="site-footer__link">Profile</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
