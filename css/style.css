@@ -1,15 +1,5 @@
-/* ================================================================
-   style.css — MusicLog Global Design System
-   Dark purple / blue / grey theme
-   ================================================================ */
-
-
-/* ----------------------------------------------------------------
-   1. CUSTOM PROPERTIES
-   ---------------------------------------------------------------- */
-
 :root {
-  /* Backgrounds — layered dark purple / slate */
+  /* Backgrounds */
   --color-bg:        #0b0b10;
   --color-surface:   #111118;
   --color-surface-2: #18181f;
@@ -21,7 +11,7 @@
   --color-border-dim: #1c1c28;
   --color-border-hi:  #3a3a54;
 
-  /* Accent — vivid purple → mid blue */
+  /* Accent */
   --color-accent:       #7b68ee;
   --color-accent-2:     #4e80f5;
   --color-accent-hover: #9580f7;
@@ -90,10 +80,6 @@
 }
 
 
-/* ----------------------------------------------------------------
-   2. RESET
-   ---------------------------------------------------------------- */
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 img  { display: block; max-width: 100%; }
@@ -106,10 +92,7 @@ h1, h2, h3, h4, h5 { line-height: 1.2; font-weight: 700; }
 [hidden] { display: none !important; }
 
 
-/* ----------------------------------------------------------------
-   3. BASE
-   ---------------------------------------------------------------- */
-
+/* base */
 body {
   background-color: var(--color-bg);
   color: var(--color-text);
@@ -122,7 +105,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Subtle purple dot-grid grain overlay */
 body::before {
   content: '';
   position: fixed;
@@ -138,10 +120,7 @@ body::before {
 }
 
 
-/* ----------------------------------------------------------------
-   4. UTILITY
-   ---------------------------------------------------------------- */
-
+/* utilities */
 .sr-only {
   position: absolute;
   width: 1px; height: 1px;
@@ -201,9 +180,7 @@ body::before {
 .empty-state__text { font-size: var(--text-md); }
 
 
-/* ----------------------------------------------------------------
-   5. NAVIGATION
-   ---------------------------------------------------------------- */
+/* navigation */
 
 .site-header {
   position: fixed;
@@ -331,9 +308,7 @@ body::before {
 }
 
 
-/* ----------------------------------------------------------------
-   6. BUTTONS
-   ---------------------------------------------------------------- */
+/* buttons */
 
 .btn {
   display: inline-flex;
@@ -402,9 +377,7 @@ body::before {
 .btn-icon--clear          { font-size: var(--text-xs); }
 
 
-/* ----------------------------------------------------------------
-   7. FORM COMPONENTS  (shared across all pages)
-   ---------------------------------------------------------------- */
+/* forms */
 
 .form-group {
   display: flex;
@@ -713,9 +686,7 @@ body::before {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ----------------------------------------------------------------
-   8. SITE FOOTER
-   ---------------------------------------------------------------- */
+/* FOOTER*/
 
 .site-footer {
   border-top: 1px solid var(--color-border-dim);
@@ -755,11 +726,8 @@ body::before {
 .site-footer__link:hover { color: var(--color-accent); }
 
 
-/* ----------------------------------------------------------------
-   9. RESPONSIVE — global  (page-specific breakpoints in each file)
-   ---------------------------------------------------------------- */
+/* responsivity */
 
-/* ≤ 600 px  (mobile) */
 @media (max-width: 600px) {
   :root {
     --nav-height:  56px;
@@ -768,7 +736,6 @@ body::before {
 
   .nav__links         { display: none; }
   .nav__toggle        { display: flex; }
-  /* Hide "+ Log Music" accent CTA from nav actions on very small screens */
   .nav__actions > .btn--accent { display: none; }
 
   .form-row { flex-direction: column; }
@@ -782,6 +749,5 @@ body::before {
   .nav__toggle       { display: none; }
   .nav-mobile        { display: none !important; }
   .nav__links        { display: flex; }
-  /* Show the accent CTA on all screen sizes ≥ 1024px */
   .nav__actions > .btn--accent { display: inline-flex; }
 }

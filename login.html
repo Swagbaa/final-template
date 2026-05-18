@@ -3,484 +3,160 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="MusicLog — Search for songs and albums, then log and rate them.">
-  <title>MusicLog — Search &amp; Log</title>
+  <meta name="description" content="MusicLog — Sign in or create an account.">
+  <title>MusicLog — Sign In</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/search.css">
+  <link rel="stylesheet" href="css/login.css">
 </head>
-<body data-page="search">
+<body data-page="login">
 
-  <header class="site-header">
-    <nav class="nav" aria-label="Main navigation">
-      <a href="index.html" class="nav__logo" aria-label="MusicLog — go to home">
-        <span class="nav__logo-icon" aria-hidden="true">♪</span>
+  <div class="login-page">
+
+    <!-- ── CARD ── -->
+    <main class="login-card" id="main-content">
+
+      <!-- Logo -->
+      <a href="index.html" class="login-logo" aria-label="MusicLog — go to home">
+        <span class="login-logo__icon" aria-hidden="true">♪</span>
         MUSICLOG
       </a>
 
-      <ul class="nav__links" role="list">
-        <li><a href="index.html"    class="nav__link">Home</a></li>
-        <li><a href="search.html"   class="nav__link nav__link--active" aria-current="page">Search</a></li>
-        <li><a href="profile.html"  class="nav__link">Profile</a></li>
-        <li><a href="login.html"    class="nav__link">Sign In</a></li>
-      </ul>
+      <p class="login-tagline">Track every listen. Rate everything.</p>
 
-      <div class="nav__actions">
-        <a href="search.html" class="btn btn--accent btn--sm" aria-label="Log new music">+ Log Music</a>
+      <!-- Tab switcher -->
+      <div class="login-tabs" role="tablist" aria-label="Sign in or create account">
         <button
-          class="nav__toggle"
-          id="nav-toggle"
-          aria-label="Open navigation menu"
-          aria-expanded="false"
-          aria-controls="nav-mobile"
-        >
-          <span class="nav__toggle-bar" aria-hidden="true"></span>
-          <span class="nav__toggle-bar" aria-hidden="true"></span>
-          <span class="nav__toggle-bar" aria-hidden="true"></span>
-        </button>
-      </div>
-    </nav>
-
-    <div class="nav-mobile" id="nav-mobile" hidden>
-      <ul class="nav-mobile__links" role="list">
-        <li><a href="index.html"   class="nav-mobile__link">Home</a></li>
-        <li><a href="index.html"   class="nav-mobile__link">Home</a></li>
-        <li><a href="search.html"  class="nav-mobile__link" aria-current="page">Search</a></li>
-        <li><a href="profile.html" class="nav-mobile__link">Profile</a></li>
-        <li><a href="login.html"   class="nav-mobile__link">Sign In</a></li>
-      </ul>
-    </div>
-  </header>
-
-  <main class="search-layout" id="main-content">
-
-    <div class="search-col">
-
-      <header class="search-page-header">
-        <h1 class="search-page-header__heading">Search &amp; Log</h1>
-        <p class="search-page-header__sub">Find a song or album, then log it with a rating and review.</p>
-      </header>
-
-      <fieldset class="search-type" id="search-type">
-        <legend class="search-type__legend">Search for</legend>
-        <label class="search-type__option">
-          <input
-            class="search-type__radio"
-            type="radio"
-            name="search-type"
-            value="recording"
-            checked
-            aria-label="Search for songs"
-          >
-          <span class="search-type__label">Songs</span>
-        </label>
-        <label class="search-type__option">
-          <input
-            class="search-type__radio"
-            type="radio"
-            name="search-type"
-            value="release"
-            aria-label="Search for albums"
-          >
-          <span class="search-type__label">Albums</span>
-        </label>
-        <label class="search-type__option">
-          <input
-            class="search-type__radio"
-            type="radio"
-            name="search-type"
-            value="artist"
-            aria-label="Search for artists"
-          >
-          <span class="search-type__label">Artists</span>
-        </label>
-      </fieldset>
-
-      <div class="search-bar" role="search" aria-label="Search MusicBrainz">
-        <label class="sr-only" for="search-input">Search for music</label>
-        <input
-          class="search-bar__input"
-          type="search"
-          id="search-input"
-          name="q"
-          placeholder="e.g. Bohemian Rhapsody, Dark Side of the Moon…"
-          autocomplete="off"
-          aria-label="Search for songs, albums, or artists"
-          aria-controls="search-results"
-          aria-autocomplete="list"
-        >
-        <button class="search-bar__btn btn btn--accent" id="search-btn" aria-label="Search">
-          <span aria-hidden="true">⌕</span> Search
-        </button>
+          class="login-tab login-tab--active"
+          role="tab"
+          id="tab-login"
+          aria-selected="true"
+          aria-controls="panel-login"
+          data-tab="login"
+        >Sign In</button>
+        <button
+          class="login-tab"
+          role="tab"
+          id="tab-register"
+          aria-selected="false"
+          aria-controls="panel-register"
+          data-tab="register"
+        >Create Account</button>
       </div>
 
-      <div class="search-status" id="search-loading" role="status" aria-live="polite" hidden>
-        <div class="spinner" aria-hidden="true"></div>
-        <span>Searching MusicBrainz…</span>
-      </div>
-
-      <div class="search-status search-status--error" id="search-error" role="alert" aria-live="assertive" hidden>
-        <span class="search-status__icon" aria-hidden="true">⚠</span>
-        <span id="search-error-msg">Could not reach MusicBrainz. Check your internet connection and try again.</span>
-      </div>
-
-      <p class="search-results-count" id="results-count" aria-live="polite"></p>
-
-      <div
-        class="results-grid"
-        id="search-results"
-        role="list"
-        aria-label="Search results — click a result to pre-fill the log form"
-        aria-live="polite"
+      <!-- ── SIGN IN ── -->
+      <section
+        class="login-panel login-panel--active"
+        id="panel-login"
+        role="tabpanel"
+        aria-labelledby="tab-login"
       >
-        <!--
-          Each result card injected by JS:
-          <div class="result-card" role="listitem" tabindex="0" aria-label="[title] by [artist], [year]. Click to log.">
-            <div class="result-card__cover-wrap">
-              <img class="result-card__cover" src="..." alt="Cover art for [title] by [artist]">
-              <div class="result-card__overlay" aria-hidden="true">
-                <span class="result-card__log-icon">+ Log</span>
-              </div>
-            </div>
-            <div class="result-card__info">
-              <span class="result-card__type tag tag--[type]">[type]</span>
-              <h3 class="result-card__title">[title]</h3>
-              <p class="result-card__artist">[artist]</p>
-              <p class="result-card__meta">[year] · [duration]</p>
-            </div>
-          </div>
-        -->
-      </div>
-
-      <div class="search-empty" id="search-empty" aria-label="Search instructions">
-        <div class="search-empty__inner">
-          <span class="search-empty__icon" aria-hidden="true">🎵</span>
-          <p class="search-empty__text">Search for a song or album above to get started.</p>
-          <p class="search-empty__hint">Data comes from <a href="https://musicbrainz.org" target="_blank" rel="noopener noreferrer">MusicBrainz</a> — the world's largest open music encyclopedia.</p>
-        </div>
-      </div>
-
-      <div class="search-empty" id="search-no-results" hidden>
-        <div class="search-empty__inner">
-          <span class="search-empty__icon" aria-hidden="true">🔍</span>
-          <p class="search-empty__text">No results found.</p>
-          <p class="search-empty__hint">Try a different search term or switch between Songs / Albums.</p>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="log-col" id="log-col">
-
-      <div class="log-form-wrap" id="log-form-wrap">
-
-        <div class="log-prefill" id="log-prefill" hidden>
-          <img
-            class="log-prefill__cover"
-            id="prefill-cover"
-            src="assets/cover-placeholder.svg"
-            alt="Cover art for the selected music"
-          >
-          <div class="log-prefill__info">
-            <span class="log-prefill__title" id="prefill-title">—</span>
-            <span class="log-prefill__artist" id="prefill-artist">—</span>
-            <span class="log-prefill__meta" id="prefill-meta">—</span>
-          </div>
-          <button
-            class="btn-icon btn-icon--clear log-prefill__clear"
-            id="prefill-clear"
-            aria-label="Clear selected music and reset form"
-            title="Clear"
-          >✕</button>
-        </div>
-
-        <!-- ============================================================
-             LOG ENTRY FORM
-             Contains 7 distinct input types:
-               1. text       — title (editable override)
-               2. text       — artist
-               3. select     — entry type (song / album)
-               4. select     — genre
-               5. number     — year
-               6. range      — rating slider
-               7. number     — rating numeric (synced to slider)
-               8. date       — date listened
-               9. textarea   — review / notes
-              10. checkbox   — add to favorites
-              11. radio      — listened fully / partially / background
-        ============================================================ -->
-        <form class="log-form" id="log-form" novalidate aria-label="Log a music entry">
-          <h2 class="log-form__heading">Log Entry</h2>
-
-          <input type="hidden" id="log-mbid"        name="mbid">
-          <input type="hidden" id="log-artist-mbid" name="artistMbid">
-          <input type="hidden" id="log-cover-url"   name="coverUrl">
-          <input type="hidden" id="log-duration"    name="duration">
-          <input type="hidden" id="log-edit-id"     name="editId">
+        <form class="login-form" id="login-form" novalidate aria-label="Sign in">
 
           <div class="form-group">
-            <label class="form-label" for="log-title">
-              Title <abbr title="required" aria-label="required">*</abbr>
-            </label>
+            <label class="form-label" for="login-username">Username</label>
             <input
               class="form-input"
               type="text"
-              id="log-title"
-              name="title"
-              placeholder="Song or album title"
+              id="login-username"
+              name="username"
+              placeholder="Enter your username"
               required
-              minlength="1"
-              maxlength="200"
-              autocomplete="off"
+              minlength="2"
+              maxlength="32"
+              autocomplete="username"
+              aria-describedby="err-login-username"
             >
-            <span class="form-error" id="err-title" role="alert" aria-live="polite"></span>
+            <span class="form-error" id="err-login-username" role="alert" aria-live="polite"></span>
           </div>
 
-          <div class="form-group">
-            <label class="form-label" for="log-artist">
-              Artist <abbr title="required" aria-label="required">*</abbr>
-            </label>
-            <input
-              class="form-input"
-              type="text"
-              id="log-artist"
-              name="artist"
-              placeholder="Artist name"
-              required
-              minlength="1"
-              maxlength="200"
-              autocomplete="off"
-            >
-            <span class="form-error" id="err-artist" role="alert" aria-live="polite"></span>
-          </div>
+          <button type="submit" class="btn btn--accent btn--full">Sign In</button>
 
-          <div class="form-group">
-            <label class="form-label" for="log-album">Album</label>
-            <input
-              class="form-input"
-              type="text"
-              id="log-album"
-              name="album"
-              placeholder="Album or release name (optional)"
-              maxlength="200"
-              autocomplete="off"
-            >
-          </div>
-
-          <div class="form-row">
-            <div class="form-group form-group--half">
-              <label class="form-label" for="log-type">
-                Type <abbr title="required" aria-label="required">*</abbr>
-              </label>
-              <select
-                class="form-input form-input--select"
-                id="log-type"
-                name="type"
-                required
-              >
-                <option value="">— Select —</option>
-                <option value="song">Song</option>
-                <option value="album">Album</option>
-                <option value="ep">EP</option>
-                <option value="single">Single</option>
-              </select>
-              <span class="form-error" id="err-type" role="alert" aria-live="polite"></span>
-            </div>
-
-            <div class="form-group form-group--half">
-              <label class="form-label" for="log-year">Year</label>
-              <input
-                class="form-input"
-                type="number"
-                id="log-year"
-                name="year"
-                placeholder="e.g. 1975"
-                min="1900"
-                max="2030"
-                step="1"
-              >
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="log-genre">Genre</label>
-            <select class="form-input form-input--select" id="log-genre" name="genre">
-              <option value="">— Select genre —</option>
-              <option value="rock">Rock</option>
-              <option value="pop">Pop</option>
-              <option value="hip-hop">Hip-Hop / Rap</option>
-              <option value="electronic">Electronic</option>
-              <option value="jazz">Jazz</option>
-              <option value="classical">Classical</option>
-              <option value="r&b">R&amp;B / Soul</option>
-              <option value="metal">Metal</option>
-              <option value="folk">Folk</option>
-              <option value="indie">Indie</option>
-              <option value="punk">Punk</option>
-              <option value="blues">Blues</option>
-              <option value="reggae">Reggae</option>
-              <option value="country">Country</option>
-              <option value="latin">Latin</option>
-              <option value="ambient">Ambient</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="log-rating-range">
-              Rating <abbr title="required" aria-label="required">*</abbr>
-              <span class="form-label__hint">(1 – 10)</span>
-            </label>
-            <div class="rating-control" role="group" aria-labelledby="rating-label">
-              <span id="rating-label" class="sr-only">Rating from 1 to 10</span>
-              <input
-                class="form-range"
-                type="range"
-                id="log-rating-range"
-                name="ratingRange"
-                min="1"
-                max="10"
-                step="1"
-                value="7"
-                aria-label="Rating slider — use arrow keys to adjust"
-              >
-              <input
-                class="form-input form-input--rating-num"
-                type="number"
-                id="log-rating"
-                name="rating"
-                min="1"
-                max="10"
-                step="1"
-                value="7"
-                required
-                aria-label="Rating number input"
-              >
-              <span class="rating-control__stars" id="rating-stars" aria-hidden="true">★★★★★★★☆☆☆</span>
-            </div>
-            <span class="form-error" id="err-rating" role="alert" aria-live="polite"></span>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="log-date">Date Listened</label>
-            <input
-              class="form-input"
-              type="date"
-              id="log-date"
-              name="dateListened"
-              aria-label="Date you listened to this music"
-            >
-          </div>
-
-          <fieldset class="form-group form-fieldset" id="listen-mode-group">
-            <legend class="form-label">How did you listen?</legend>
-            <div class="radio-group" role="group" aria-label="Listening mode">
-              <label class="radio-option">
-                <input
-                  class="radio-option__input"
-                  type="radio"
-                  name="listenMode"
-                  value="full"
-                  checked
-                  aria-label="Listened fully"
-                >
-                <span class="radio-option__label">Full listen</span>
-              </label>
-              <label class="radio-option">
-                <input
-                  class="radio-option__input"
-                  type="radio"
-                  name="listenMode"
-                  value="partial"
-                  aria-label="Listened partially"
-                >
-                <span class="radio-option__label">Partial</span>
-              </label>
-              <label class="radio-option">
-                <input
-                  class="radio-option__input"
-                  type="radio"
-                  name="listenMode"
-                  value="background"
-                  aria-label="Listened in the background"
-                >
-                <span class="radio-option__label">Background</span>
-              </label>
-            </div>
-          </fieldset>
-
-          <div class="form-group">
-            <label class="form-label" for="log-review">Review / Notes</label>
-            <textarea
-              class="form-input form-input--textarea"
-              id="log-review"
-              name="review"
-              placeholder="What did you think? Any standout moments?"
-              rows="4"
-              maxlength="1000"
-            ></textarea>
-            <span class="form-hint">
-              <span id="review-char-count">0</span> / 1000
-            </span>
-          </div>
-
-          <div class="form-group form-group--check">
-            <label class="form-label form-label--check" for="log-favorite">
-              <input
-                class="form-checkbox"
-                type="checkbox"
-                id="log-favorite"
-                name="favorite"
-              >
-              <span>Add to Favorites</span>
-            </label>
-          </div>
-
-          <div class="form-actions">
-            <button type="submit" class="btn btn--accent btn--full" id="log-submit-btn">
-              Save Entry
-            </button>
-            <button type="reset" class="btn btn--ghost" id="log-reset-btn">
-              Clear
-            </button>
-          </div>
-
-          <div
-            class="form-feedback"
-            id="log-feedback"
-            role="alert"
-            aria-live="assertive"
-            aria-atomic="true"
-          ></div>
+          <div class="form-feedback" id="login-feedback" role="alert" aria-live="assertive"></div>
 
         </form>
 
-      </div>
+        <p class="login-switch">
+          No account?
+          <button type="button" class="login-switch__btn" id="go-register">Create one →</button>
+        </p>
+      </section>
 
-    </div>
+      <!-- ── CREATE ACCOUNT ── -->
+      <section
+        class="login-panel"
+        id="panel-register"
+        role="tabpanel"
+        aria-labelledby="tab-register"
+        hidden
+      >
+        <form class="login-form" id="register-form" novalidate aria-label="Create account">
 
-  </main>
+          <!-- Username — type="text" -->
+          <div class="form-group">
+            <label class="form-label" for="reg-username">
+              Username <abbr title="required" aria-label="required">*</abbr>
+            </label>
+            <input
+              class="form-input"
+              type="text"
+              id="reg-username"
+              name="username"
+              placeholder="Choose a username"
+              required
+              minlength="2"
+              maxlength="32"
+              pattern="[A-Za-z0-9_\-]+"
+              autocomplete="username"
+              aria-describedby="err-reg-username hint-reg-username"
+            >
+            <span class="form-hint" id="hint-reg-username">Letters, numbers, _ and - only.</span>
+            <span class="form-error" id="err-reg-username" role="alert" aria-live="polite"></span>
+          </div>
 
-  <footer class="site-footer">
-    <div class="site-footer__inner">
-      <span class="site-footer__brand">
-        <span aria-hidden="true">♪</span> MUSICLOG
-      </span>
-      <p class="site-footer__text">
-        Music data powered by
-        <a href="https://musicbrainz.org" target="_blank" rel="noopener noreferrer">MusicBrainz</a>
-        &amp;
-        <a href="https://coverartarchive.org" target="_blank" rel="noopener noreferrer">Cover Art Archive</a>.
+          <!-- Email — type="email" -->
+          <div class="form-group">
+            <label class="form-label" for="reg-email">
+              Email <abbr title="required" aria-label="required">*</abbr>
+            </label>
+            <input
+              class="form-input"
+              type="email"
+              id="reg-email"
+              name="email"
+              placeholder="your@email.com"
+              required
+              autocomplete="email"
+              aria-describedby="err-reg-email"
+            >
+            <span class="form-error" id="err-reg-email" role="alert" aria-live="polite"></span>
+          </div>
+
+          <button type="submit" class="btn btn--accent btn--full">Create Account</button>
+
+          <div class="form-feedback" id="register-feedback" role="alert" aria-live="assertive"></div>
+
+        </form>
+
+        <p class="login-switch">
+          Already have an account?
+          <button type="button" class="login-switch__btn" id="go-login">Sign in →</button>
+        </p>
+      </section>
+
+      <p class="login-note">
+        Your data is stored locally in this browser — nothing is sent anywhere.
       </p>
-      <nav class="site-footer__nav" aria-label="Footer navigation">
-        <a href="index.html"   class="site-footer__link">Home</a>
-        <a href="search.html"  class="site-footer__link">Search</a>
-        <a href="profile.html" class="site-footer__link">Profile</a>
-      </nav>
-    </div>
-  </footer>
+
+    </main>
+
+    <nav class="login-back" aria-label="Return to site">
+      <a href="index.html" class="login-back__link">← Back to site</a>
+    </nav>
+
+  </div>
 
   <script type="module" src="js/main.js"></script>
 </body>
