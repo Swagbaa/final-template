@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MusicLog — Your saved favorite artists, albums, and songs.">
+  <title>MusicLog — Saved</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/saved.css">
+</head>
+<body data-page="saved">
+
+  <header class="site-header">
+    <nav class="nav" aria-label="Main navigation">
+      <a href="index.html" class="nav__logo" aria-label="MusicLog — go to home">
+        <span class="nav__logo-icon" aria-hidden="true">♪</span>
+        MUSICLOG
+      </a>
+
+      <ul class="nav__links" role="list">
+        <li><a href="index.html"   class="nav__link">Home</a></li>
+        <li><a href="search.html"  class="nav__link">Search</a></li>
+        <li><a href="profile.html" class="nav__link">Profile</a></li>
+        <li><a href="saved.html"   class="nav__link nav__link--active" aria-current="page">Saved</a></li>
+        <li><a href="login.html"   class="nav__link">Sign In</a></li>
+      </ul>
+
+      <div class="nav__actions">
+        <a href="search.html" class="btn btn--accent btn--sm">+ Log Music</a>
+        <button
+          class="nav__toggle"
+          id="nav-toggle"
+          aria-label="Open navigation menu"
+          aria-expanded="false"
+          aria-controls="nav-mobile"
+        >
+          <span class="nav__toggle-bar" aria-hidden="true"></span>
+          <span class="nav__toggle-bar" aria-hidden="true"></span>
+          <span class="nav__toggle-bar" aria-hidden="true"></span>
+        </button>
+      </div>
+    </nav>
+
+    <div class="nav-mobile" id="nav-mobile" hidden>
+      <ul class="nav-mobile__links" role="list">
+        <li><a href="index.html"   class="nav-mobile__link">Home</a></li>
+        <li><a href="search.html"  class="nav-mobile__link">Search</a></li>
+        <li><a href="profile.html" class="nav-mobile__link">Profile</a></li>
+        <li><a href="saved.html"   class="nav-mobile__link" aria-current="page">Saved</a></li>
+        <li><a href="login.html"   class="nav-mobile__link">Sign In</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="saved-layout" id="main-content">
+
+    <header class="saved-header">
+      <h1 class="saved-header__heading" id="saved-username">Your Favorites</h1>
+      <p class="saved-header__sub">
+        Artists, albums, and songs you've marked as favorites.
+        <a href="profile.html#favorites" class="saved-header__link">Manage in Profile →</a>
+      </p>
+    </header>
+
+    <!-- Favorite Artists -->
+    <article class="saved-section" aria-labelledby="fav-artists-heading">
+      <header class="saved-section__header">
+        <h2 class="section-heading" id="fav-artists-heading">Artists</h2>
+        <span class="saved-section__count" id="fav-artists-count" aria-live="polite"></span>
+      </header>
+      <div
+        class="favorites-grid"
+        id="fav-artists-grid"
+        role="list"
+        aria-label="Favorite artists"
+      ></div>
+      <div class="empty-state" id="fav-artists-empty" hidden>
+        <span class="empty-state__icon" aria-hidden="true">🎤</span>
+        <p class="empty-state__text">No favorite artists yet.</p>
+        <p>Mark an artist as a favorite from your <a href="profile.html#list">log</a> or the <a href="search.html">log form</a>.</p>
+      </div>
+    </article>
+
+    <!-- Favorite Albums -->
+    <article class="saved-section" aria-labelledby="fav-albums-heading">
+      <header class="saved-section__header">
+        <h2 class="section-heading" id="fav-albums-heading">Albums</h2>
+        <span class="saved-section__count" id="fav-albums-count" aria-live="polite"></span>
+      </header>
+      <div
+        class="favorites-grid"
+        id="fav-albums-grid"
+        role="list"
+        aria-label="Favorite albums"
+      ></div>
+      <div class="empty-state" id="fav-albums-empty" hidden>
+        <span class="empty-state__icon" aria-hidden="true">💿</span>
+        <p class="empty-state__text">No favorite albums yet.</p>
+      </div>
+    </article>
+
+    <!-- Favorite Songs -->
+    <article class="saved-section" aria-labelledby="fav-songs-heading">
+      <header class="saved-section__header">
+        <h2 class="section-heading" id="fav-songs-heading">Songs</h2>
+        <span class="saved-section__count" id="fav-songs-count" aria-live="polite"></span>
+      </header>
+      <div
+        class="favorites-grid favorites-grid--songs"
+        id="fav-songs-grid"
+        role="list"
+        aria-label="Favorite songs"
+      ></div>
+      <div class="empty-state" id="fav-songs-empty" hidden>
+        <span class="empty-state__icon" aria-hidden="true">🎵</span>
+        <p class="empty-state__text">No favorite songs yet.</p>
+      </div>
+    </article>
+
+  </main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <span class="site-footer__brand"><span aria-hidden="true">♪</span> MUSICLOG</span>
+      <p class="site-footer__text">
+        Music data powered by
+        <a href="https://musicbrainz.org" target="_blank" rel="noopener noreferrer">MusicBrainz</a>.
+      </p>
+      <nav class="site-footer__nav" aria-label="Footer navigation">
+        <a href="index.html"   class="site-footer__link">Home</a>
+        <a href="search.html"  class="site-footer__link">Search</a>
+        <a href="profile.html" class="site-footer__link">Profile</a>
+        <a href="saved.html"   class="site-footer__link">Saved</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
