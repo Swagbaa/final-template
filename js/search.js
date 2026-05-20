@@ -382,10 +382,6 @@ function clearMessages(...els) {
   els.forEach(el => { if (el) el.textContent = ''; });
 }
 
-<<<<<<< HEAD
-//  ROUTER — bootstrap the correct page
-=======
->>>>>>> fix/login-mobile
 
 initNav();
 updateNavAuthState();
