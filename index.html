@@ -53,30 +53,30 @@
 
   <main class="home-layout" id="main-content">
     
-    <div class="home-feed">
-      <header class="feed-header">
-        <h1 class="section-heading">Recent Activity</h1>
-        <span id="feed-count" class="feed-count"></span>
+    <div class="feed">
+      <header class="feed__header">
+        <h1 class="feed__heading">Recent Activity</h1>
+        <span id="feed-count" class="feed__count"></span>
       </header>
 
-      <div class="feed-status" id="feed-loading">
+      <div class="feed__loading" id="feed-loading">
         <div class="spinner" aria-hidden="true"></div>
         <span>Loading feed...</span>
       </div>
 
-      <div class="feed-list" id="activity-feed" role="feed" aria-busy="false">
+      <div class="feed__list" id="activity-feed" role="feed" aria-busy="false">
         </div>
 
-      <div class="empty-state" id="feed-empty" hidden>
+      <div class="feed__empty empty-state" id="feed-empty" hidden>
         <span class="empty-state__icon" aria-hidden="true">🎵</span>
         <p class="empty-state__text">Nothing here yet.</p>
         <a href="search.html" class="btn btn--accent btn--sm">Log your first song →</a>
       </div>
     </div>
 
-    <aside class="home-sidebar">
+    <aside class="sidebar">
       
-      <div class="sidebar-widget profile-peek">
+      <div class="sidebar-card profile-peek">
         <img id="sidebar-avatar" src="assets/avatar-placeholder.svg" alt="Profile avatar" class="profile-peek__avatar">
         <div class="profile-peek__info">
           <h2 id="sidebar-username" class="profile-peek__name">Anonymous</h2>
@@ -85,20 +85,20 @@
         <a href="profile.html" class="btn btn--ghost btn--sm btn--full mt-sm">Go to Profile</a>
       </div>
 
-      <div class="sidebar-widget">
-        <h3 class="widget-heading">Recently Logged</h3>
-        <ul id="recent-list" class="widget-list" role="list">
+      <div class="sidebar-card">
+        <h3 class="sidebar-card__heading">Recently Logged</h3>
+        <ul id="recent-list" class="recent-list" role="list">
           </ul>
-        <p id="recent-empty" class="widget-empty" hidden>No recent logs.</p>
+        <p id="recent-empty" class="sidebar-card__empty" hidden>No recent logs.</p>
       </div>
 
-      <div class="sidebar-widget">
-        <h3 class="widget-heading">Trending Releases</h3>
+      <div class="sidebar-card">
+        <h3 class="sidebar-card__heading">Trending Releases</h3>
         
-        <div id="trending-loading" class="widget-status">Loading...</div>
-        <div id="trending-error" class="widget-status error" hidden>Couldn't load trending.</div>
+        <div id="trending-loading" class="sidebar-card__loading">Loading...</div>
+        <div id="trending-error" class="sidebar-card__error" hidden>Couldn't load trending.</div>
         
-        <ul id="trending-list" class="widget-list" role="list">
+        <ul id="trending-list" class="trending-list" role="list">
           </ul>
       </div>
 

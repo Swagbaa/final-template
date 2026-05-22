@@ -17,10 +17,9 @@ import { debounce } from './api.js';
 
 let currentSort = 'date-desc';
 let filterQuery = '';
+let listTabInitialized = false;
 
 // CLOSURE — private session counter exposed via a narrow API.
-// Tracks how many entries the user has added during this visit
-// without polluting the module scope with a bare mutable variable.
 const sessionCounter = (() => {
   let count = 0;
   return {
@@ -170,8 +169,12 @@ function switchTab(tabName) {
     p.toggleAttribute('hidden', p.id !== `panel-${tabName}`);
   });
 
-  // Persist in URL without reloading
-  history.replaceState(null, '', `#${tabName}`);
+  // Try/Catch prevents security crashes when testing locally via file://
+  try {
+    history.replaceState(null, '', `#${tabName}`);
+  } catch (error) {
+    // Ignore History API errors on local filesystem
+  }
 
   // Render the selected tab
   switch (tabName) {
@@ -259,10 +262,13 @@ function updateQuickStats(log) {
 function initListTab() {
   renderList();
 
+  // Prevent event listeners from duplicating if user clicks the List tab repeatedly
+  if (listTabInitialized) return;
+  listTabInitialized = true;
+
   const filterInput = document.getElementById('list-filter');
   const sortSelect  = document.getElementById('list-sort');
 
-  // Debounced filter — closes over filterInput
   const debouncedFilter = debounce(() => {
     filterQuery = filterInput?.value.toLowerCase().trim() ?? '';
     renderList();
@@ -322,7 +328,6 @@ function renderList() {
       : '';
   }
 
-  // CLOSURE: each row's handlers close over their specific `entry`
   sorted.forEach(entry => tbody.appendChild(createLogRow(entry)));
 }
 
@@ -394,7 +399,7 @@ function createLogRow(entry) {
 
   const tdDate = makeCell('', formatDate(entry.dateLogged));
 
-  // Actions — each handler closes over `entry` and `tr`
+  // Actions
   const tdActions = document.createElement('td');
   tdActions.className = 'log-row__actions';
 
@@ -417,7 +422,7 @@ function createLogRow(entry) {
     deleteEntry(entry.id);
     tr.remove();
     renderProfileHero();
-    sessionCounter.increment();   // track deletes via closure counter
+    sessionCounter.increment(); 
     const remaining = document.querySelectorAll('#log-tbody .log-row').length;
     const countEl   = document.getElementById('list-count');
     const updated   = getLog();
@@ -598,7 +603,6 @@ function renderYearBars(byYear) {
 
     const fill = document.createElement('div');
     fill.className = 'stats-bar-row__fill';
-    // Set CSS custom property programmatically — not an inline style=""
     fill.style.setProperty('--bar-pct', `${pct}%`);
     track.appendChild(fill);
 
