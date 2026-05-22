@@ -32,18 +32,18 @@ async function mbFetch(path) {
  * @param {number} limit
  * @returns {Promise<NormalizedResult[]>}
  */
-export async function searchMusicBrainz(type, query, limit = 12) {
+
+export async function searchMusicBrainz(type, query, limit = 20) {
+  // Use a more flexible query structure
+  // If the user types "Song Artist", this supports it better
   const encoded = encodeURIComponent(query.trim());
   if (!encoded) return [];
 
+  // Increase limit from 12 to 20 or 50 as needed
   const data = await mbFetch(`/${type}?query=${encoded}&limit=${limit}`);
-
-  switch (type) {
-    case 'recording': return (data.recordings ?? []).map(normalizeRecording);
-    case 'release':   return (data.releases   ?? []).map(normalizeRelease);
-    case 'artist':    return (data.artists    ?? []).map(normalizeArtist);
-    default:          return [];
-  }
+  
+  // Return the mapped results (ensure your mapping function exists)
+  return data[type + 's'].map(type === 'recording' ? normalizeRecording : normalizeArtist);
 }
 
 // normalizing responsive
