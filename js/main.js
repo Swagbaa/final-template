@@ -1,16 +1,21 @@
+   - Mobile nav toggle (runs on every page)
+   - Auth-aware nav link (Sign In ↔ username)
+   - Home page init (feed + sidebar)
+   - Routes to the correct page controller
+
 import { initSearch }  from './search.js';
 import { initProfile } from './profile.js';
+import { initLogin }   from './login.js';
+import { initSaved }   from './saved.js';
 import {
-  getUser, saveUser, isLoggedIn,
-  getLog, getActivity,
+  getUser, getLog, getActivity,
   formatTotalTime, formatDateShort, buildStars,
 } from './storage.js';
-import { fetchRecentReleases, getCoverUrl } from './api.js';
+import { fetchRecentReleases } from './api.js';
 
-// ── Page detection ────────────────────────────────────────────────
 const PAGE = document.body.dataset.page;
 
-//  SHARED: Mobile nav toggle  (runs on every page)
+//  MOBILE NAV TOGGLE  (shared across every page)
 
 function initNav() {
   const toggle = document.getElementById('nav-toggle');
@@ -18,13 +23,13 @@ function initNav() {
   if (!toggle || !drawer) return;
 
   toggle.addEventListener('click', () => {
-    const isOpen = !drawer.hasAttribute('hidden');
-    drawer.toggleAttribute('hidden', isOpen);
-    toggle.setAttribute('aria-expanded', String(!isOpen));
-    toggle.setAttribute('aria-label', isOpen ? 'Open navigation menu' : 'Close navigation menu');
+    const opening = drawer.hasAttribute('hidden');
+    drawer.toggleAttribute('hidden', !opening);
+    toggle.setAttribute('aria-expanded', String(opening));
+    toggle.setAttribute('aria-label', opening ? 'Close navigation menu' : 'Open navigation menu');
   });
 
-  // Close drawer when a link inside it is clicked
+  // Close drawer when any link inside it is followed
   drawer.addEventListener('click', e => {
     if (e.target.tagName === 'A') {
       drawer.setAttribute('hidden', '');
@@ -33,30 +38,32 @@ function initNav() {
   });
 }
 
+//  AUTH-AWARE NAV  (swap "Sign In" link for username on all pages)
 
 function updateNavAuthState() {
   const user = getUser();
+  if (!user?.username) return;
+
   document.querySelectorAll('a[href="login.html"]').forEach(link => {
-    if (user?.username) {
-      link.textContent = user.username;
-      link.href = 'profile.html';
-      link.setAttribute('aria-label', `Your profile — ${user.username}`);
-    }
+    link.textContent = user.username;
+    link.href = 'profile.html';
+    link.setAttribute('aria-label', `Your profile — ${user.username}`);
   });
 }
 
 //  HOME PAGE
 
-export function initHome() {
-  updateHomeProfilePeek();
+function initHome() {
+  renderSidebarProfilePeek();
   renderFeed();
   renderRecentSidebar();
   loadTrending();
 }
 
-function updateHomeProfilePeek() {
-  const user    = getUser();
-  const log     = getLog();
+function renderSidebarProfilePeek() {
+  const user = getUser();
+  const log  = getLog();
+
   const usernameEl = document.getElementById('sidebar-username');
   const statsEl    = document.getElementById('sidebar-stats');
   const avatarEl   = document.getElementById('sidebar-avatar');
@@ -71,14 +78,14 @@ function updateHomeProfilePeek() {
 }
 
 function renderFeed() {
-  const feed      = document.getElementById('activity-feed');
-  const loading   = document.getElementById('feed-loading');
+  const feedEl    = document.getElementById('activity-feed');
+  const loadingEl = document.getElementById('feed-loading');
   const emptyEl   = document.getElementById('feed-empty');
   const countEl   = document.getElementById('feed-count');
-  if (!feed) return;
+  if (!feedEl) return;
 
   const entries = getActivity();
-  loading?.setAttribute('hidden', '');
+  loadingEl?.setAttribute('hidden', '');
 
   if (!entries.length) {
     emptyEl?.removeAttribute('hidden');
@@ -89,8 +96,8 @@ function renderFeed() {
 
   entries.forEach((entry, i) => {
     const card = createActivityCard(entry);
-    card.style.animationDelay = `${i * 0.05}s`;
-    feed.appendChild(card);
+    card.style.animationDelay = `${Math.min(i, 8) * 0.05}s`;
+    feedEl.appendChild(card);
   });
 }
 
@@ -102,7 +109,9 @@ function createActivityCard(entry) {
   // Cover
   const coverLink = document.createElement('a');
   coverLink.className = 'activity-card__cover-link';
-  coverLink.href = 'search.html';
+  coverLink.href = `search.html?edit=${entry.id}`;
+  coverLink.setAttribute('aria-label', `Edit log entry for ${entry.title}`);
+
   const img = document.createElement('img');
   img.className = 'activity-card__cover';
   img.alt = `Cover art for ${entry.title} by ${entry.artist}`;
@@ -116,14 +125,17 @@ function createActivityCard(entry) {
 
   const meta = document.createElement('div');
   meta.className = 'activity-card__meta';
+
   const typeTag = document.createElement('span');
   typeTag.className = `tag tag--${entry.type}`;
   typeTag.textContent = entry.type;
-  const date = document.createElement('time');
-  date.className = 'activity-card__date';
-  date.dateTime = entry.dateLogged;
-  date.textContent = formatDateShort(entry.dateLogged);
-  meta.append(typeTag, date);
+
+  const dateEl = document.createElement('time');
+  dateEl.className = 'activity-card__date';
+  dateEl.dateTime  = entry.dateLogged;
+  dateEl.textContent = formatDateShort(entry.dateLogged);
+
+  meta.append(typeTag, dateEl);
 
   const title = document.createElement('h2');
   title.className = 'activity-card__title';
@@ -136,15 +148,17 @@ function createActivityCard(entry) {
   const ratingRow = document.createElement('div');
   ratingRow.className = 'activity-card__rating';
   ratingRow.setAttribute('aria-label', `Rating: ${entry.rating} out of 10`);
+
   const stars = document.createElement('span');
   stars.className = 'activity-card__stars';
   stars.setAttribute('aria-hidden', 'true');
   stars.textContent = buildStars(entry.rating);
+
   const score = document.createElement('span');
   score.className = 'activity-card__score';
   score.textContent = `${entry.rating} / 10`;
-  ratingRow.append(stars, score);
 
+  ratingRow.append(stars, score);
   body.append(meta, title, artist, ratingRow);
 
   if (entry.review) {
@@ -159,11 +173,12 @@ function createActivityCard(entry) {
 }
 
 function renderRecentSidebar() {
-  const list    = document.getElementById('recent-list');
+  const listEl  = document.getElementById('recent-list');
   const emptyEl = document.getElementById('recent-empty');
-  if (!list) return;
+  if (!listEl) return;
 
   const entries = getLog().slice(0, 5);
+
   if (!entries.length) {
     emptyEl?.removeAttribute('hidden');
     return;
@@ -181,29 +196,32 @@ function renderRecentSidebar() {
 
     const info = document.createElement('div');
     info.className = 'recent-item__info';
-    const titleEl  = document.createElement('span');
+
+    const titleEl = document.createElement('span');
     titleEl.className = 'recent-item__title';
     titleEl.textContent = entry.title;
+
     const artistEl = document.createElement('span');
     artistEl.className = 'recent-item__artist';
     artistEl.textContent = entry.artist;
+
     info.append(titleEl, artistEl);
 
     const score = document.createElement('span');
     score.className = 'recent-item__score';
-    score.setAttribute('aria-label', `Rated ${entry.rating}`);
+    score.setAttribute('aria-label', `Rated ${entry.rating} out of 10`);
     score.textContent = entry.rating;
 
     li.append(img, info, score);
-    list.appendChild(li);
+    listEl.appendChild(li);
   });
 }
 
 async function loadTrending() {
-  const list      = document.getElementById('trending-list');
+  const listEl    = document.getElementById('trending-list');
   const loadingEl = document.getElementById('trending-loading');
   const errorEl   = document.getElementById('trending-error');
-  if (!list) return;
+  if (!listEl) return;
 
   try {
     const releases = await fetchRecentReleases(5);
@@ -226,16 +244,18 @@ async function loadTrending() {
 
       const info = document.createElement('div');
       info.className = 'trending-item__info';
-      const titleEl  = document.createElement('span');
+
+      const titleEl = document.createElement('span');
       titleEl.className = 'trending-item__title';
       titleEl.textContent = release.title;
+
       const artistEl = document.createElement('span');
       artistEl.className = 'trending-item__artist';
       artistEl.textContent = release.artist;
-      info.append(titleEl, artistEl);
 
+      info.append(titleEl, artistEl);
       li.append(img, info);
-      list.appendChild(li);
+      listEl.appendChild(li);
     });
   } catch {
     loadingEl?.setAttribute('hidden', '');
@@ -243,142 +263,7 @@ async function loadTrending() {
   }
 }
 
-//  LOGIN PAGE
-
-export function initLogin() {
-  // If already logged in, go straight to home
-  if (isLoggedIn()) {
-    window.location.href = 'index.html';
-    return;
-  }
-
-  initLoginTabs();
-  initLoginForm();
-  initRegisterForm();
-}
-
-function initLoginTabs() {
-  const tabs   = document.querySelectorAll('.login-tab');
-  const panels = document.querySelectorAll('.login-panel');
-
-  function switchTab(target) {
-    tabs.forEach(t => {
-      const active = t.dataset.tab === target;
-      t.classList.toggle('login-tab--active', active);
-      t.setAttribute('aria-selected', String(active));
-    });
-    panels.forEach(p => {
-      const active = p.id === `panel-${target}`;
-      p.toggleAttribute('hidden', !active);
-      if (active) p.classList.add('login-panel--active');
-      else        p.classList.remove('login-panel--active');
-    });
-  }
-
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
-  });
-
-  // Cross-link buttons inside forms
-  document.getElementById('go-register')?.addEventListener('click', () => switchTab('register'));
-  document.getElementById('go-login')?.addEventListener('click',    () => switchTab('login'));
-}
-
-function initLoginForm() {
-  const form      = document.getElementById('login-form');
-  const feedback  = document.getElementById('login-feedback');
-  const errEl     = document.getElementById('err-login-username');
-  if (!form) return;
-
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    clearMessages(feedback, errEl);
-
-    const username = form.querySelector('#login-username').value.trim();
-
-    if (!username) {
-      showFieldError(errEl, 'Please enter your username.');
-      return;
-    }
-
-    const user = getUser();
-    if (!user) {
-      showFeedback(feedback, 'No account found. Create one using the Create Account tab.', 'error');
-      return;
-    }
-    if (user.username.toLowerCase() !== username.toLowerCase()) {
-      showFeedback(feedback, 'Username not recognised. Did you mean to create an account?', 'error');
-      return;
-    }
-
-    showFeedback(feedback, `Welcome back, ${user.username}!`, 'success');
-    setTimeout(() => { window.location.href = 'index.html'; }, 700);
-  });
-}
-
-function initRegisterForm() {
-  const form     = document.getElementById('register-form');
-  const feedback = document.getElementById('register-feedback');
-  if (!form) return;
-
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    clearMessages(
-      feedback,
-      document.getElementById('err-reg-username'),
-      document.getElementById('err-reg-email'),
-    );
-
-    const username = form.querySelector('#reg-username').value.trim();
-    const email    = form.querySelector('#reg-email').value.trim();
-
-    let valid = true;
-
-    if (!username || username.length < 2) {
-      showFieldError(document.getElementById('err-reg-username'), 'Username must be at least 2 characters.');
-      valid = false;
-    }
-    if (!/^[A-Za-z0-9_\-]+$/.test(username)) {
-      showFieldError(document.getElementById('err-reg-username'), 'Only letters, numbers, _ and - are allowed.');
-      valid = false;
-    }
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      showFieldError(document.getElementById('err-reg-email'), 'Please enter a valid email address.');
-      valid = false;
-    }
-    if (!valid) return;
-
-    const user = {
-      username,
-      email,
-      bio:      '',
-      country:  '',
-      favGenre: '',
-      joinDate: new Date().toISOString(),
-    };
-    saveUser(user);
-
-    showFeedback(feedback, `Account created! Welcome, ${username} 🎵`, 'success');
-    setTimeout(() => { window.location.href = 'index.html'; }, 900);
-  });
-}
-
-
-function showFieldError(el, msg) {
-  if (!el) return;
-  el.textContent = msg;
-}
-
-function showFeedback(el, msg, type) {
-  if (!el) return;
-  el.textContent = msg;
-  el.className = `form-feedback form-feedback--${type}`;
-}
-
-function clearMessages(...els) {
-  els.forEach(el => { if (el) el.textContent = ''; });
-}
-
+//  ROUTER — run on every page load
 
 initNav();
 updateNavAuthState();
@@ -388,4 +273,5 @@ switch (PAGE) {
   case 'search':  initSearch();  break;
   case 'profile': initProfile(); break;
   case 'login':   initLogin();   break;
+  case 'saved':   initSaved();   break;
 }
