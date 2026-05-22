@@ -2,7 +2,6 @@ const MB_BASE    = 'https://musicbrainz.org/ws/2';
 const CAA_BASE   = 'https://coverartarchive.org/release';
 const USER_AGENT = 'MusicLog/1.0 (musiclog-student-project)';
 
-
 export function debounce(fn, delay) {
   let timerId;                       
   return function (...args) {
@@ -11,22 +10,20 @@ export function debounce(fn, delay) {
   };
 }
 
-//base fetcher
-
+// base fetcher
 async function mbFetch(path) {
   const sep = path.includes('?') ? '&' : '?';
   const url = `${MB_BASE}${path}${sep}fmt=json`;
 
   const res = await fetch(url, {
-    headers: { 'User-Agent': USER_AGENT },
+    headers: { 'Accept': 'application/json' },
   });
 
   if (!res.ok) throw new Error(`MusicBrainz ${res.status}: ${res.statusText}`);
   return res.json();
 }
 
-
-//search
+// search
 
 /**
  * Search MusicBrainz.
@@ -49,7 +46,7 @@ export async function searchMusicBrainz(type, query, limit = 12) {
   }
 }
 
-//normalizing responsive
+// normalizing responsive
 
 function normalizeRecording(r) {
   const artistCredit = r['artist-credit'] ?? [];
@@ -117,14 +114,14 @@ function mapReleaseType(mbType) {
   }
 }
 
-//cover art
+// cover art
 
 export function getCoverUrl(releaseMbid) {
   if (!releaseMbid) return '';
   return `${CAA_BASE}/${releaseMbid}/front-250`;
 }
 
-//trending or recent releases  
+// trending or recent releases  
 
 export async function fetchRecentReleases(limit = 6) {
   const year = new Date().getFullYear();
