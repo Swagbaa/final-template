@@ -9,7 +9,13 @@ const KEYS = {
 const ACTIVITY_LIMIT = 30;
 
 // ── ID generator ───
-export const generateId = () => crypto.randomUUID();
+export const generateId = () => {
+  // Use secure crypto if available, otherwise fallback for local file:// testing
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return Date.now().toString(36) + Math.random().toString(36).substring(2);
+};
 
 //  USER  (profile info)
 
@@ -31,26 +37,6 @@ export function isLoggedIn() {
 
 // ================================================================
 //  LOG  (array of LogEntry objects)
-//
-//  LogEntry shape:
-//  {
-//    id:         string   – UUID
-//    type:       string   – 'song' | 'album' | 'ep' | 'single'
-//    mbid:       string   – MusicBrainz recording/release ID
-//    title:      string
-//    artist:     string
-//    artistMbid: string
-//    album:      string
-//    year:       number
-//    genre:      string
-//    duration:   number   – seconds (0 if unknown)
-//    rating:     number   – 1–10
-//    review:     string
-//    listenMode: string   – 'full' | 'partial' | 'background'
-//    coverUrl:   string
-//    favorite:   boolean
-//    dateLogged: string   – ISO 8601
-//  }
 // ================================================================
 
 export function getLog() {
@@ -148,9 +134,6 @@ function pushActivity(entry) {
 
 //  FORMATTERS
 
-/**
- * Format seconds as "m:ss"  e.g. 214 → "3:34"
- */
 export function formatDuration(seconds) {
   if (!seconds) return '—';
   const m = Math.floor(seconds / 60);
@@ -158,9 +141,6 @@ export function formatDuration(seconds) {
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-/**
- * Format total seconds as "Xh Ym" or "Ym"  e.g. 7384 → "2h 3m"
- */
 export function formatTotalTime(totalSeconds) {
   if (!totalSeconds) return '0m';
   const h = Math.floor(totalSeconds / 3600);
@@ -169,9 +149,6 @@ export function formatTotalTime(totalSeconds) {
   return `${m}m`;
 }
 
-/**
- * Format an ISO date string as "May 17, 2026"
- */
 export function formatDate(iso) {
   if (!iso) return '—';
   return new Date(iso).toLocaleDateString('en-US', {
@@ -179,25 +156,17 @@ export function formatDate(iso) {
   });
 }
 
-/**
- * Format ISO date as short "May 17"
- */
 export function formatDateShort(iso) {
   if (!iso) return '—';
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-/**
- * Build a 10-character star string  e.g. rating=7 → "★★★★★★★☆☆☆"
- */
 export function buildStars(rating) {
   const n = Math.max(0, Math.min(10, Math.round(rating)));
   return '★'.repeat(n) + '☆'.repeat(10 - n);
 }
 
 //  STATS ENGINE
-//  Returns a rich stats object computed from the log array.
-//  Pure function — no side effects.
 
 export function computeStats(log) {
   const totalEntries  = log.length;
@@ -205,13 +174,11 @@ export function computeStats(log) {
   const totalAlbums   = log.filter(e => e.type !== 'song').length;
   const totalDuration = log.reduce((sum, e) => sum + (e.duration || 0), 0);
 
-  // Mean rating (only entries that have a rating)
   const rated    = log.filter(e => e.rating > 0);
   const meanRating = rated.length
     ? (rated.reduce((s, e) => s + e.rating, 0) / rated.length).toFixed(1)
     : null;
 
-  // ── By artist ──────────────────────────────────────────────────
   const artistMap = {};
   log.forEach(e => {
     if (!e.artist) return;
@@ -229,7 +196,6 @@ export function computeStats(log) {
     .slice(0, 10)
     .map(a => ({ ...a, avgRating: a.ratingCount ? (a.ratingSum / a.ratingCount).toFixed(1) : null }));
 
-  // ── By genre ───────────────────────────────────────────────────
   const genreMap = {};
   log.forEach(e => {
     if (!e.genre) return;
@@ -250,7 +216,6 @@ export function computeStats(log) {
       share: totalEntries ? Math.round((g.count / totalEntries) * 100) : 0,
     }));
 
-  // ── By year ────────────────────────────────────────────────────
   const yearMap = {};
   log.forEach(e => {
     const yr = Number(e.year);
