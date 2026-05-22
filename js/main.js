@@ -1,7 +1,8 @@
-   - Mobile nav toggle (runs on every page)
-   - Auth-aware nav link (Sign In ↔ username)
-   - Home page init (feed + sidebar)
-   - Routes to the correct page controller
+//  - Mobile nav toggle (runs on every page)
+//   - Auth-aware nav link (Sign In ↔ username)
+//   - Home page init (feed + sidebar)
+//   - Routes to the correct page controller
+
 
 import { initSearch }  from './search.js';
 import { initProfile } from './profile.js';
