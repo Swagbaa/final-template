@@ -54,6 +54,29 @@
   letter-spacing: 0.04em;
 }
 
+/* ── Favorites Grid Layout ── */
+.favorites-grid {
+  display: grid;
+  /* Creates responsive columns that are at least 150px wide */
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--sp-4, 1rem);
+  align-items: start;
+}
+
+/* ── Song-Specific Grid ── */
+/* Songs often look better wider because of track titles */
+.favorites-grid--songs {
+  /* Makes song columns slightly wider than artists/albums */
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+/* Ensure images inside the grid don't blow up */
+.favorites-grid img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--r-md, 8px);
+}
+
 /* ── Responsive ── */
 @media (max-width: 600px) {
   .saved-header__heading { font-size: var(--text-2xl); }
