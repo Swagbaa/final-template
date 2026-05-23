@@ -1,4 +1,5 @@
 import { searchMusicBrainz } from './api.js';
+import { addEntry, generateId, addFavorite } from './storage.js';
 
 export function initSearch() {
   const searchBtn     = document.getElementById('search-btn');
@@ -117,4 +118,67 @@ export function initSearch() {
       searchBtn.click();
     }
   });
+  const logForm = document.getElementById('log-form');
+  const logFeedback = document.getElementById('log-feedback');
+
+  if (logForm) {
+    logForm.addEventListener('submit', (e) => {
+      e.preventDefault(); // Prevent page reload
+
+      const title = document.getElementById('log-title').value.trim();
+      const artist = document.getElementById('log-artist').value.trim();
+      const type = document.getElementById('log-type').value;
+
+      // Ensure required fields are filled
+      if (!title || !artist || !type) {
+        if (logFeedback) {
+          logFeedback.textContent = 'Please fill out Title, Artist, and Type.';
+          logFeedback.className = 'form-feedback form-feedback--error';
+        }
+        return;
+      }
+
+      // Build the data object
+      const entry = {
+        id: document.getElementById('log-edit-id').value || generateId(),
+        title: title,
+        artist: artist,
+        album: document.getElementById('log-album').value.trim(),
+        type: type,
+        year: parseInt(document.getElementById('log-year').value, 10) || null,
+        genre: document.getElementById('log-genre').value,
+        rating: parseInt(document.getElementById('log-rating').value, 10),
+        dateLogged: document.getElementById('log-date').value || new Date().toISOString().split('T')[0],
+        review: document.getElementById('log-review').value.trim(),
+        coverUrl: document.getElementById('log-cover-url').value,
+        duration: parseInt(document.getElementById('log-duration').value, 10) || 0
+      };
+
+      // Save to local storage
+      addEntry(entry);
+
+      // Handle the Favorites checkbox
+      if (document.getElementById('log-favorite').checked) {
+        const favType = type === 'song' ? 'songs' : 'albums';
+        addFavorite(favType, {
+          id: entry.id,
+          title: entry.title,
+          artist: entry.artist,
+          coverUrl: entry.coverUrl,
+          year: entry.year
+        });
+      }
+
+      // Show success message and clear form
+      if (logFeedback) {
+        logFeedback.textContent = 'Successfully logged! 🎵';
+        logFeedback.className = 'form-feedback form-feedback--success';
+        
+        setTimeout(() => {
+          logFeedback.textContent = '';
+          logForm.reset();
+        }, 2000);
+      }
+    });
+  }
 }
