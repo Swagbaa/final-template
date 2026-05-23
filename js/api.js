@@ -34,16 +34,29 @@ async function mbFetch(path) {
  */
 
 export async function searchMusicBrainz(type, query, limit = 20) {
-  // Use a more flexible query structure
-  // If the user types "Song Artist", this supports it better
-  const encoded = encodeURIComponent(query.trim());
+  let finalQuery = query.trim();
+
+  // Check if the user used the "Title --Artist" syntax
+  if (finalQuery.includes('--')) {
+    const parts = finalQuery.split('--').map(p => p.trim());
+    if (parts.length === 2) {
+      // Formats for the API: "Title" AND artist:"Artist Name"
+      finalQuery = `"${parts[0]}" AND artist:"${parts[1]}"`;
+    }
+  }
+
+  const encoded = encodeURIComponent(finalQuery);
   if (!encoded) return [];
 
-  // Increase limit from 12 to 20 or 50 as needed
   const data = await mbFetch(`/${type}?query=${encoded}&limit=${limit}`);
   
-  // Return the mapped results (ensure your mapping function exists)
-  return data[type + 's'].map(type === 'recording' ? normalizeRecording : normalizeArtist);
+  // Bonus Fix: properly map releases (albums) to normalizeRelease
+  let mapper;
+  if (type === 'recording') mapper = normalizeRecording;
+  else if (type === 'release') mapper = normalizeRelease;
+  else mapper = normalizeArtist;
+
+  return data[type + 's'].map(mapper);
 }
 
 // normalizing responsive
